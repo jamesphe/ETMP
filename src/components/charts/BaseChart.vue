@@ -45,21 +45,34 @@ const getCurrentTheme = () => {
 
 // 初始化图表
 const initChart = async () => {
-  // 等待下一个 tick，确保 DOM 已更新
   await nextTick()
   
   if (chart) {
     chart.dispose()
   }
 
-  // 确保容器存在且有尺寸
   if (!chartRef.value) return null
 
-  // 等待一小段时间确保容器尺寸已计算
-  await new Promise(resolve => setTimeout(resolve, 100))
-
   try {
-    chart = echarts.init(chartRef.value)
+    const container = chartRef.value
+    const rendererOpts = {
+      devicePixelRatio: window.devicePixelRatio,
+      width: container.clientWidth,
+      height: container.clientHeight,
+      useDirtyRect: true,
+      // 添加更多事件相关配置
+      renderer: 'canvas',
+      pointerOptions: {
+        passive: true
+      }
+    }
+    
+    chart = echarts.init(chartRef.value, null, rendererOpts)
+    
+    // 手动添加事件监听器
+    const chartDom = chartRef.value
+    chartDom.addEventListener('wheel', () => {}, { passive: true })
+    chartDom.addEventListener('mousewheel', () => {}, { passive: true })
     
     // 监听容器大小变化
     const resizeObserver = new ResizeObserver(() => {
@@ -149,5 +162,9 @@ onUnmounted(() => {
 .chart-container {
   @apply w-full h-full absolute inset-0;
   min-height: inherit;
+  /* 添加以下 CSS 属性来优化触摸和滚动行为 */
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
 }
 </style> 

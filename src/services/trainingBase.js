@@ -1,8 +1,8 @@
-import { supabase } from './supabase'
+import { supabase } from '@/supabase'
 
-export const trainingBaseAPI = {
+export const trainingBaseService = {
   // 获取实训基地列表
-  async getTrainingBases() {
+  async getList() {
     const { data, error } = await supabase
       .from('training_bases')
       .select('*')
@@ -12,11 +12,44 @@ export const trainingBaseAPI = {
     return data
   },
 
-  // 添加实训基地
-  async addTrainingBase(baseData) {
+  // 获取单个实训基地
+  async getById(id) {
+    try {
+      const { data, error } = await supabase
+        .from('training_bases')
+        .select('*')
+        .eq('id', id)
+        .single()
+        
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('获取实训基地详情失败:', error)
+      throw error
+    }
+  },
+
+  // 创建实训基地
+  async create(baseData) {
+    // 生成基地编号
+    const baseCode = `BASE${Date.now()}`
+    
     const { data, error } = await supabase
       .from('training_bases')
-      .insert(baseData)
+      .insert([{
+        base_code: baseCode,
+        base_name: baseData.name,
+        dept_code: baseData.deptCode || 'DEFAULT',
+        dept_name: baseData.deptName || '默认部门',
+        establish_date: new Date().toISOString(),
+        support_unit: baseData.supportUnit || '默认依托单位',
+        major_names: baseData.majorNames || [],
+        partner_companies: baseData.partnerCompanies || [],
+        base_type: baseData.baseType || 'internal',
+        contact_person: baseData.contact,
+        contact_phone: baseData.phone,
+        remarks: baseData.description
+      }])
       .select()
     
     if (error) throw error
@@ -24,10 +57,20 @@ export const trainingBaseAPI = {
   },
 
   // 更新实训基地
-  async updateTrainingBase(id, baseData) {
+  async update(id, baseData) {
     const { data, error } = await supabase
       .from('training_bases')
-      .update(baseData)
+      .update({
+        base_name: baseData.name,
+        dept_name: baseData.deptName,
+        support_unit: baseData.supportUnit,
+        major_names: baseData.majorNames,
+        partner_companies: baseData.partnerCompanies,
+        base_type: baseData.baseType,
+        contact_person: baseData.contact,
+        contact_phone: baseData.phone,
+        remarks: baseData.description
+      })
       .eq('id', id)
       .select()
     
@@ -36,7 +79,7 @@ export const trainingBaseAPI = {
   },
 
   // 删除实训基地
-  async deleteTrainingBase(id) {
+  async delete(id) {
     const { error } = await supabase
       .from('training_bases')
       .delete()
