@@ -143,30 +143,41 @@
         </el-table-column>
         <el-table-column 
           label="操作" 
-          width="150" 
+          width="180" 
           fixed="right"
           align="center"
         >
           <template #default="{ row }">
-            <div class="operation-buttons">
+            <el-button-group>
               <el-button 
                 type="primary" 
                 link
                 size="small"
                 @click="handleEdit(row)"
               >
-                编辑
+                <el-icon><Edit /></el-icon>编辑
               </el-button>
-              <el-divider direction="vertical" />
               <el-button 
-                :type="row.status === 'active' ? 'danger' : 'success'"
+                :type="row.status === 'active' ? 'warning' : 'success'"
                 link
                 size="small"
                 @click="handleStatus(row)"
               >
+                <el-icon>
+                  <CircleClose v-if="row.status === 'active'" />
+                  <CircleCheck v-else />
+                </el-icon>
                 {{ row.status === 'active' ? '停用' : '启用' }}
               </el-button>
-            </div>
+              <el-button
+                type="danger"
+                link
+                size="small"
+                @click="handleDelete(row)"
+              >
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -252,7 +263,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Edit, CircleCheck, CircleClose, Collection, Search, Refresh } from '@element-plus/icons-vue'
+import { Plus, Edit, CircleCheck, CircleClose, Collection, Search, Refresh, Delete } from '@element-plus/icons-vue'
 import { useMajorStore } from '@/stores/system/major/major'
 
 // 初始化 store
@@ -472,51 +483,6 @@ onMounted(() => {
   color: #409eff;
 }
 
-.operation-bar {
-  display: flex;
-  gap: 10px;
-}
-
-.pagination-container {
-  margin-top: 20px;
-  padding-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid #ebeef5;
-}
-
-.dialog-form {
-  padding: 20px 20px 0;
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding-top: 20px;
-}
-
-:deep(.el-card__body) {
-  padding: 20px;
-}
-
-:deep(.el-table) {
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-:deep(.el-button) {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-:deep(.el-tag) {
-  min-width: 60px;
-  text-align: center;
-}
-
-/* 重新设计查询区样式 */
 .search-wrapper {
   margin-bottom: 20px;
   padding: 20px;
@@ -529,6 +495,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
 .label {
@@ -536,12 +503,6 @@ onMounted(() => {
   color: #606266;
   font-size: 14px;
   text-align: right;
-}
-
-:deep(.el-input),
-:deep(.el-select) {
-  flex: 1;
-  min-width: 0; /* 防止flex子项溢出 */
 }
 
 .search-buttons {
@@ -553,37 +514,31 @@ onMounted(() => {
   border-top: 1px dashed #e6e6e6;
 }
 
-:deep(.el-button) {
-  min-width: 80px;
-  display: inline-flex;
-  align-items: center;
+.table-toolbar {
+  margin-bottom: 16px;
+}
+
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 操作按钮样式 */
+.operation-buttons {
+  display: flex;
+  gap: 8px;
   justify-content: center;
-  gap: 4px;
 }
 
-:deep(.el-input__wrapper),
-:deep(.el-select .el-input__wrapper) {
-  box-shadow: 0 0 0 1px #dcdfe6 inset;
-}
-
-:deep(.el-input__wrapper:hover),
-:deep(.el-select .el-input__wrapper:hover) {
-  box-shadow: 0 0 0 1px #c0c4cc inset;
-}
-
-:deep(.el-input__wrapper.is-focus),
-:deep(.el-select .el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 1px #409eff inset;
+.el-button [class*='el-icon'] + span {
+  margin-left: 4px;
 }
 
 /* 响应式布局 */
 @media screen and (max-width: 1400px) {
   :deep(.el-col-6) {
     width: 50%;
-  }
-  
-  .search-item {
-    margin-bottom: 16px;
   }
 }
 
@@ -593,99 +548,15 @@ onMounted(() => {
   }
 }
 
-/* 表格相关样式 */
-.table-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding: 8px 0;
+/* 对话框样式 */
+.dialog-form {
+  padding: 20px 20px 0;
 }
 
-.total-count {
-  font-size: 14px;
-  color: #606266;
-}
-
-:deep(.el-table) {
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-:deep(.el-table th) {
-  background-color: #f5f7fa !important;
-  color: #606266;
-  font-weight: 600;
-  height: 45px;
-}
-
-:deep(.el-table td) {
-  padding: 8px 0;
-}
-
-:deep(.el-table--border .el-table__inner-wrapper::after),
-:deep(.el-table--border::after) {
-  background-color: #ebeef5;
-}
-
-:deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
-  background-color: #fafafa;
-}
-
-:deep(.el-table__body tr.current-row > td) {
-  background-color: #ecf5ff !important;
-}
-
-:deep(.el-tag) {
-  min-width: 60px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-
-:deep(.el-button.el-button--small) {
-  font-size: 12px;
-  padding: 4px 8px;
-  height: 28px;
-}
-
-.pagination-container {
+.dialog-footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #ebeef5;
-}
-
-:deep(.el-pagination.is-background .el-pager li:not(.is-disabled).is-active) {
-  background-color: var(--el-color-primary);
-}
-
-:deep(.el-pagination.is-background .el-pager li:not(.is-disabled):hover) {
-  color: var(--el-color-primary);
-}
-
-/* 操作列按钮样式 */
-.operation-buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: nowrap;
-}
-
-:deep(.operation-buttons .el-button) {
-  padding: 0 8px;
-  height: 28px;
-  font-size: 12px;
-}
-
-:deep(.operation-buttons .el-divider--vertical) {
-  height: 16px;
-  margin: 0 8px;
-}
-
-/* 移除按钮的图标，只保留文字 */
-:deep(.operation-buttons .el-button .el-icon) {
-  display: none;
+  gap: 10px;
+  padding-top: 20px;
 }
 </style> 

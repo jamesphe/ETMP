@@ -161,25 +161,36 @@
           align="center"
         >
           <template #default="{ row }">
-            <div class="operation-buttons">
+            <el-button-group>
               <el-button 
                 type="primary" 
                 link
                 size="small"
                 @click="handleEdit(row)"
               >
-                编辑
+                <el-icon><Edit /></el-icon>编辑
               </el-button>
-              <el-divider direction="vertical" />
               <el-button 
-                :type="row.status === 'active' ? 'danger' : 'success'"
+                :type="row.status === 'active' ? 'warning' : 'success'"
                 link
                 size="small"
                 @click="handleStatus(row)"
               >
+                <el-icon>
+                  <CircleClose v-if="row.status === 'active'" />
+                  <CircleCheck v-else />
+                </el-icon>
                 {{ row.status === 'active' ? '停用' : '启用' }}
               </el-button>
-            </div>
+              <el-button
+                type="danger"
+                link
+                size="small"
+                @click="handleDelete(row)"
+              >
+                <el-icon><Delete /></el-icon>删除
+              </el-button>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -272,7 +283,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, School, Search, Refresh } from '@element-plus/icons-vue'
+import { Plus, School, Search, Refresh, Edit, CircleClose, CircleCheck, Delete } from '@element-plus/icons-vue'
 import { useClassStore } from '@/stores/system/major/class'
 import { useMajorStore } from '@/stores/system/major/major'
 
@@ -472,6 +483,25 @@ const handleCurrentChange = (val) => {
   loadClassList()
 }
 
+// 删除处理方法
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm('确定要删除该班级吗？', '提示', {
+      type: 'warning',
+      confirmButtonText: '确定',
+      cancelButtonText: '取消'
+    })
+    
+    await classStore.deleteClass(row.classCode)
+    ElMessage.success('删除成功')
+    loadClassList()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败')
+    }
+  }
+}
+
 // 初始化
 onMounted(() => {
   loadClassList()
@@ -525,6 +555,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
 .label {
@@ -553,6 +584,25 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
+/* 响应式布局 */
+@media screen and (max-width: 1400px) {
+  :deep(.el-col-6) {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  :deep(.el-col-6) {
+    width: 100%;
+  }
+}
+
+/* 操作按钮样式 */
+.el-button [class*='el-icon'] + span {
+  margin-left: 4px;
+}
+
+/* 对话框样式 */
 .dialog-form {
   padding: 20px 20px 0;
 }
@@ -562,22 +612,5 @@ onMounted(() => {
   justify-content: flex-end;
   gap: 10px;
   padding-top: 20px;
-}
-
-/* 响应式布局 */
-@media screen and (max-width: 1400px) {
-  :deep(.el-col-6) {
-    width: 50%;
-  }
-  
-  .search-item {
-    margin-bottom: 16px;
-  }
-}
-
-@media screen and (max-width: 768px) {
-  :deep(.el-col-6) {
-    width: 100%;
-  }
 }
 </style> 

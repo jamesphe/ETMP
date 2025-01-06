@@ -10,7 +10,7 @@
     <el-card class="org-tree-card">
       <div class="flex">
         <!-- 左侧树形结构 -->
-        <div class="w-1/3 border-r pr-4">
+        <div class="w-1/3 border-r pr-4 tree-container">
           <el-input
             v-model="searchKeyword"
             placeholder="搜索机构"
@@ -18,42 +18,44 @@
             clearable
             class="mb-4"
           />
-          <el-tree
-            ref="treeRef"
-            :data="orgTree"
-            :props="defaultProps"
-            :filter-node-method="filterNode"
-            node-key="id"
-            default-expand-all
-            highlight-current
-            draggable
-            @node-click="handleNodeClick"
-            @node-drag-end="handleDragEnd"
-          >
-            <template #default="{ node, data }">
-              <div class="flex items-center justify-between w-full">
-                <span>{{ node.label }}</span>
-                <div class="operation-buttons">
-                  <el-button-group>
-                    <el-button 
-                      :type="primary"
-                      link
-                      @click.stop="handleEdit(data)"
-                    >
-                      <el-icon><Edit /></el-icon>
-                    </el-button>
-                    <el-button 
-                      :type="danger"
-                      link
-                      @click.stop="handleDelete(node, data)"
-                    >
-                      <el-icon><Delete /></el-icon>
-                    </el-button>
-                  </el-button-group>
+          <div class="tree-wrapper">
+            <el-tree
+              ref="treeRef"
+              :data="orgTree"
+              :props="defaultProps"
+              :filter-node-method="filterNode"
+              node-key="id"
+              default-expand-all
+              highlight-current
+              draggable
+              @node-click="handleNodeClick"
+              @node-drag-end="handleDragEnd"
+            >
+              <template #default="{ node, data }">
+                <div class="flex items-center justify-between w-full">
+                  <span>{{ node.label }}</span>
+                  <div class="operation-buttons">
+                    <el-button-group>
+                      <el-button 
+                        :type="primary"
+                        link
+                        @click.stop="handleEdit(data)"
+                      >
+                        <el-icon><Edit /></el-icon>
+                      </el-button>
+                      <el-button 
+                        :type="danger"
+                        link
+                        @click.stop="handleDelete(node, data)"
+                      >
+                        <el-icon><Delete /></el-icon>
+                      </el-button>
+                    </el-button-group>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </el-tree>
+              </template>
+            </el-tree>
+          </div>
         </div>
 
         <!-- 右侧详情 -->
@@ -446,5 +448,17 @@ onUnmounted(() => {
 
 :deep(.el-tree-node.is-current > .el-tree-node__content) {
   background-color: var(--el-color-primary-light-9);
+}
+
+.tree-container {
+  height: calc(100vh - 200px);
+  display: flex;
+  flex-direction: column;
+}
+
+.tree-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
