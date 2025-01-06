@@ -11,6 +11,11 @@
 <script setup>
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import { provide } from 'vue'
+import { getSupabaseClient } from './supabase'
+
+// 提供 supabase 实例给所有子组件
+provide('supabase', getSupabaseClient())
 </script>
 
 <style>

@@ -237,5 +237,48 @@ export const menuItems = [
         icon: 'Histogram'
       }
     ]
+  },
+  {
+    title: '系统管理',
+    icon: 'Setting',
+    children: [
+      {
+        path: '/system/organization',
+        title: '组织架构管理',
+        icon: 'OfficeBuilding'
+      },
+      {
+        path: '/system/user',
+        title: '用户管理',
+        icon: 'User',
+        children: [
+          {
+            path: '/system/user/teacher',
+            title: '教师管理',
+            icon: 'User'
+          },
+          {
+            path: '/system/user/student',
+            title: '学生管理',
+            icon: 'User'
+          }
+        ]
+      },
+      {
+        path: '/system/role',
+        title: '角色权限管理',
+        icon: 'Lock'
+      },
+      {
+        path: '/system/dict',
+        title: '字典管理',
+        icon: 'Document'
+      },
+      {
+        path: '/system/log',
+        title: '系统日志',
+        icon: 'Document'
+      }
+    ]
   }
 ] 

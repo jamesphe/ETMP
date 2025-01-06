@@ -42,6 +42,11 @@
 
 <script setup>
 import { ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { supabase } from '@/supabase'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // 表格数据
 const tableData = ref([])
@@ -65,25 +70,53 @@ const handleCurrentChange = (val) => {
 const fetchData = async () => {
   loading.value = true
   try {
-    // TODO: 实现数据获取逻辑
-    loading.value = false
+    const { data, error, count } = await supabase
+      .from('training_rooms')
+      .select('*', { count: 'exact' })
+      .range((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value - 1)
+    
+    if (error) throw error
+    
+    tableData.value = data
+    total.value = count
   } catch (error) {
-    console.error('获取数据失败:', error)
+    ElMessage.error('获取数据失败：' + error.message)
+  } finally {
     loading.value = false
   }
 }
 
 // 处理操作
 const handleAdd = () => {
-  // TODO: 实现添加逻辑
+  // 跳转到添加页面
+  router.push('/training/room/add')
 }
 
 const handleEdit = (row) => {
-  // TODO: 实现编辑逻辑
+  // 跳转到编辑页面
+  router.push(`/training/room/edit/${row.id}`)
 }
 
-const handleDelete = (row) => {
-  // TODO: 实现删除逻辑
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm('确定要删除该实训室吗？', '提示', {
+      type: 'warning'
+    })
+    
+    const { error } = await supabase
+      .from('training_rooms')
+      .delete()
+      .eq('id', row.id)
+    
+    if (error) throw error
+    
+    ElMessage.success('删除成功')
+    fetchData()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败：' + error.message)
+    }
+  }
 }
 
 // 初始化

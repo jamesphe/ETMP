@@ -1,4 +1,6 @@
-import { supabase } from '@/supabase'
+import { getSupabaseClient } from '@/supabase'
+
+const supabase = getSupabaseClient()
 
 export const trainingBaseService = {
   // 获取实训基地列表

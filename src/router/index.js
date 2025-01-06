@@ -123,6 +123,15 @@ const routes = [
           title: '数据统计与分析',
           requiresAuth: true
         }
+      },
+      {
+        path: 'system/organization',
+        name: 'SystemOrganization',
+        component: () => import('@/views/system/organization/OrganizationList.vue'),
+        meta: {
+          title: '组织机构管理',
+          requiresAuth: true
+        }
       }
     ]
   },
