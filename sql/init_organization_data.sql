@@ -52,9 +52,9 @@ VALUES
 WITH smart_manu AS (SELECT id FROM organization WHERE org_code = '13000')
 INSERT INTO organization (org_code, org_name, org_type, parent_id, level_num, leader_title, sort_order)
 VALUES 
-    ('13000100', '院长办公室', 'academic', (SELECT id FROM smart_manu), 3, '主任', 1),
-    ('13000200', '教务办公室', 'academic', (SELECT id FROM smart_manu), 3, '主任', 2),
-    ('13000300', '学工办公室', 'academic', (SELECT id FROM smart_manu), 3, '主任', 3),
+    ('13000100', '院长办公室', 'administrative', (SELECT id FROM smart_manu), 3, '主任', 1),
+    ('13000200', '教务办公室', 'administrative', (SELECT id FROM smart_manu), 3, '主任', 2),
+    ('13000300', '学工办公室', 'administrative', (SELECT id FROM smart_manu), 3, '主任', 3),
     -- 教研室
     ('13000401', '机械制造教研室', 'teaching', (SELECT id FROM smart_manu), 3, '主任', 4),
     ('13000402', '数控技术教研室', 'teaching', (SELECT id FROM smart_manu), 3, '主任', 5),

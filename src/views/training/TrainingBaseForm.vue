@@ -88,10 +88,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { trainingBaseService } from '@/services/trainingBase'
+import { useTrainingBaseStore } from '@/stores/trainingBase'
 
 const route = useRoute()
 const router = useRouter()
+const store = useTrainingBaseStore()
 const formRef = ref()
 
 const isEdit = computed(() => route.params.id)
@@ -137,9 +138,9 @@ const handleSubmit = async () => {
     }
     
     if (isEdit.value) {
-      await trainingBaseService.update(route.params.id, submitData)
+      await store.updateBase(route.params.id, submitData)
     } else {
-      await trainingBaseService.create(submitData)
+      await store.createBase(submitData)
     }
     
     ElMessage.success(`${isEdit.value ? '更新' : '创建'}成功`)
@@ -153,7 +154,7 @@ const fetchData = async () => {
   if (!isEdit.value) return
   
   try {
-    const data = await trainingBaseService.getById(route.params.id)
+    const data = await store.fetchById(route.params.id)
     formData.value = {
       name: data.base_name,
       deptName: data.dept_name,

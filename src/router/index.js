@@ -132,6 +132,80 @@ const routes = [
           title: '组织机构管理',
           requiresAuth: true
         }
+      },
+      {
+        path: 'system',
+        name: 'SystemMajor',
+        component: () => import('@/views/system/major/index.vue'),
+        meta: {
+          title: '专业管理',
+          requiresAuth: true
+        },
+        children: [
+          {
+            path: 'major',
+            name: 'MajorInfo',
+            component: () => import('@/views/system/major/info.vue'),
+            meta: {
+              title: '专业信息',
+              requiresAuth: true
+            }
+          },
+          {
+            path: 'class',
+            name: 'ClassInfo',
+            component: () => import('@/views/system/major/class.vue'),
+            meta: {
+              title: '班级信息',
+              requiresAuth: true
+            }
+          }
+        ]
+      },
+      {
+        path: 'system/user/teacher',
+        name: 'TeacherManagement',
+        component: () => import('@/views/system/user/teacher/index.vue'),
+        meta: {
+          title: '教师管理',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'system/user/student',
+        name: 'StudentManagement',
+        component: () => import('@/views/system/user/student/index.vue'),
+        meta: {
+          title: '学生管理',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'system/role',
+        name: 'SystemRole',
+        component: () => import('@/views/system/role/index.vue'),
+        meta: {
+          title: '角色权限管理',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'system/dict',
+        name: 'SystemDict',
+        component: () => import('@/views/system/dict/index.vue'),
+        meta: {
+          title: '字典管理',
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'system/log',
+        name: 'SystemLog',
+        component: () => import('@/views/system/log/index.vue'),
+        meta: {
+          title: '系统日志',
+          requiresAuth: true
+        }
       }
     ]
   },

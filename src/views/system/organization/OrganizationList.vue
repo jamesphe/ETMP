@@ -242,6 +242,30 @@ const buildTree = (data) => {
     }
   })
 
+  // 对每个节点的子节点按照org_type进行排序
+  const sortByOrgType = (nodes) => {
+    // 按照orgTypes中定义的顺序进行排序
+    nodes.sort((a, b) => {
+      const typeAIndex = orgTypes.findIndex(t => t.value === a.org_type)
+      const typeBIndex = orgTypes.findIndex(t => t.value === b.org_type)
+      if (typeAIndex === typeBIndex) {
+        // 如果类型相同，按照sort_order排序
+        return (a.sort_order || 0) - (b.sort_order || 0)
+      }
+      return typeAIndex - typeBIndex
+    })
+
+    // 递归处理子节点
+    nodes.forEach(node => {
+      if (node.children && node.children.length > 0) {
+        sortByOrgType(node.children)
+      }
+    })
+  }
+
+  // 对结果进行排序
+  sortByOrgType(result)
+
   return result
 }
 

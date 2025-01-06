@@ -248,7 +248,22 @@ export const menuItems = [
         icon: 'OfficeBuilding'
       },
       {
-        path: '/system/user',
+        title: '专业管理',
+        icon: 'Collection',
+        children: [
+          {
+            path: '/system/major',
+            title: '专业信息',
+            icon: 'Document'
+          },
+          {
+            path: '/system/class',
+            title: '班级信息',
+            icon: 'User'
+          }
+        ]
+      },
+      {
         title: '用户管理',
         icon: 'User',
         children: [
